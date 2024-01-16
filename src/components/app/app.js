@@ -17,7 +17,10 @@ class App extends Component {
                 {name: 'Brad P.', salary: 800, increase: false, raise: false, id: 1},
                 {name: 'Keanu R.', salary: 1000, increase: true, raise: false, id: 2},
                 {name: 'Bruce W.', salary: 2000, increase: false, raise: false, id: 3}
-            ]}
+            ],
+            term: '',
+            filter: 'all'
+        }
     }
 
     deleteItemById = (id) => {
@@ -63,8 +66,38 @@ class App extends Component {
         }))
     }
 
+    searchEmployee = (data, term) => {
+        if (term.length === 0) {
+            return data;
+        }
+
+        return data.filter(item => {
+            return item.name.indexOf(term) > -1;
+        })
+    }
+
+    onUpdateSearch = (term) => {
+        this.setState({term});
+    }
+
+    filterPost = (data, filter) => {
+        switch (filter) {
+            case 'raise':
+                return data.filter(item => item.raise);
+            case 'salary':
+                return data.filter(item => item.salary > 1000);
+            default:
+                return data;
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
+
     render() {
-        const {data} = this.state;
+        const {data, term, filter} = this.state;
+        const visibleData = this.filterPost(this.searchEmployee(data, term), filter);
 
         return (
             <div className="app">
@@ -72,12 +105,15 @@ class App extends Component {
                     data={data} />
     
                 <div className="search-panel">
-                    <SearchPanel />
-                    <AppFilter />
+                    <SearchPanel
+                        onUpdateSearch={this.onUpdateSearch} />
+                    <AppFilter
+                        filter={filter}
+                        onFilterSelect={this.onFilterSelect} />
                 </div>
     
                 <EmployeesList 
-                    data={data}
+                    data={visibleData}
                     onDelete={this.deleteItemById}
                     onToggleProp={this.onToggleProp} />
                 <EmployeesAddForm
