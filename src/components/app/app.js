@@ -59,7 +59,7 @@ class App extends Component {
         this.setState(({data}) => ({
             data: data.map(item => {
                 if (item.id === id) {
-                    return {...item, [prop] : !item[prop]}
+                    return {...item, [prop]: !item[prop]}
                 }
                 return item;
             })
@@ -95,6 +95,17 @@ class App extends Component {
         this.setState({filter});
     }
 
+    onSalaryChange = (id, value) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, salary: value}
+                }
+                return item;
+            })
+        }))
+    }
+
     render() {
         const {data, term, filter} = this.state;
         const visibleData = this.filterPost(this.searchEmployee(data, term), filter);
@@ -115,7 +126,8 @@ class App extends Component {
                 <EmployeesList 
                     data={visibleData}
                     onDelete={this.deleteItemById}
-                    onToggleProp={this.onToggleProp} />
+                    onToggleProp={this.onToggleProp}
+                    onSalaryChange={this.onSalaryChange} />
                 <EmployeesAddForm
                     onAdd={this.addItem} />
             </div>
